@@ -35,7 +35,7 @@ qué riesgo supone y qué tiene que hacer el cliente.*
 | Campo | Valor |
 |---|---|
 | Equipo | GRUPO 1 |
-| Operador / Investigador / Documentalista | Manuel  / Javi  / Marcos  / Daniel |
+| Operador / Investigador / Documentalista | Manuel  / Javi  / Marco / Daniel |
 | Fecha | 19/11/2026 |
 | IP de Kali | 10.0.1.10 |
 | IP de DC-1 (objetivo) | 10.0.1.11 |
@@ -55,11 +55,11 @@ que va a pasar. Si no sabéis escribirlo, preguntad a la IA qué hace el comando
 > **Pregunta de ayuda para la IA:** «¿Cómo descubro qué equipos hay en mi red `10.0.1.0/24` y qué
 > servicios tiene uno de ellos? Explícame qué hace cada opción del comando.»
 
-| Comando | Qué esperamos | Qué ha salido (lo importante) | Captura |
+| Comando | Qué esperamos | Qué ha salido (lo importante) | 
 |---|---|---|---|
 | netdiscover | El listado de los equipos que estan dentro de nuestra misma red   | Los equipos conectos a la red que hemos echo el escaneo  |  |
 | sudo nmap -p- --open -sS --min-rate 5000 -n -Pn -oN puertos.txt 10.0.1.11 | El listado de los puertos y servicios abiertos  | El listado de los puertos de la maquina selecionada  |  |
-| nmap -sC -sV -p22,80,111,36599 -oN puertos-exaustivo.txt 10.0.1.11 | Un escaneo de los puertos que hemos encontrado abiertos en el cual nos ofrece mas información de la version d elos servicios  | Las versiones de los servicios  | [n.º] |
+| nmap -sC -sV -p22,80,111,36599 -oN puertos-exaustivo.txt 10.0.1.11 | Un escaneo de los puertos que hemos encontrado abiertos en el cual nos ofrece mas información de la version d elos servicios  | Las versiones de los servicios  |  |
 
 
 **Servicios encontrados:** [puerto · servicio · versión]
@@ -93,7 +93,7 @@ El usuario encontrado es www-data
 
 **¿Por qué no somos administradores todavía?**
 
-Porque no hemos echo la escalada de priviligios 
+Porque no hemos hecho la escalada de priviligios 
 
 
 
@@ -104,8 +104,31 @@ Porque no hemos echo la escalada de priviligios
 En Linux se aplica el principio de mínimo privilegio: los servicios expuestos a internet nunca se ejecutan como administrador (root) por seguridad.
 
 
-**¿Qué fallo de configuración nos ha permitido escalar?** [
+**¿Qué fallo de configuración nos ha permitido escalar?**
 
+Una vez dentro de la sesión Meterpreter, ejecutamos la siguiente secuencia para escalar privilegios a root.
+
+>1. Salir de Meterpreter a Shell Real
+
+```bash
+shell
+```
+Explicación: Pasa de la interfaz de Meterpreter a una consola bash estándar, necesario para ejecutar comandos nativos del sistema operativo.
+
+> 2. Buscar Binarios con Permiso SUID
+
+```bash
+find / -perm -4000 -type f 2>/dev/null
+```
+Explicación: Identifica archivos ejecutables que se ejecutan con los permisos del propietario (root). En este caso, /usr/bin/find esta presente y es abusable.
+
+> 3. Abusar de SUID find
+Buscando find en la pagina https://gtfobins.org, vemos que podemos ejecutar este comando para escalar a root sin tener privilegios previos.
+
+```bash
+find . -exec /bin/sh \; -quit
+```
+Explicación: El binario find tiene permiso SUID root. Al usar su opción -exec, podemos ejecutar cualquier comando. Ejecutar /bin/sh lanza una shell que hereda los permisos de root. -quit cierra la operación de búsqueda tras la primera ejecución.
 
 **Usuario final:** 
 
@@ -135,14 +158,5 @@ Cada integrante añade al menos una fila con su bitácora.
 | Javi | Como funciona la escala de privilegios |  A como funciona  | No |
 | Dani | Como ver el nombre de usuario en kali | Diferentes formas de verlo  | No |
 | Manuel  | Los servicios mas vulnerables  | Cual es el servicio mas vulnerable para la victima | No |
+| Marco  | Como buscar los permisos de SUID  | Cual son | No |
 
----
-
-## Antes de entregar
-
-- [ ] Las cuatro fases tienen al menos un comando con lo que esperábamos, lo que salió y una captura.
-- [ ] Cada fallo tiene causa, gravedad, corrección y detección.
-- [ ] Está escrito el resumen del apartado 1.
-- [ ] Cada integrante ha rellenado su fila de IA.
-- [ ] Los tres sabemos explicar por qué hicimos cada paso (la defensa se sortea).
-- [ ] Las capturas van adjuntas y numeradas.
