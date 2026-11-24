@@ -55,11 +55,11 @@ que va a pasar. Si no sabéis escribirlo, preguntad a la IA qué hace el comando
 > **Pregunta de ayuda para la IA:** «¿Cómo descubro qué equipos hay en mi red `10.0.1.0/24` y qué
 > servicios tiene uno de ellos? Explícame qué hace cada opción del comando.»
 
-| Comando | Qué esperamos | Qué ha salido (lo importante) | 
-|---|---|---|---|
-| netdiscover | El listado de los equipos que estan dentro de nuestra misma red   | Los equipos conectos a la red que hemos echo el escaneo  |  |
-| sudo nmap -p- --open -sS --min-rate 5000 -n -Pn -oN puertos.txt 10.0.1.11 | El listado de los puertos y servicios abiertos  | El listado de los puertos de la maquina selecionada  |  |
-| nmap -sC -sV -p22,80,111,36599 -oN puertos-exaustivo.txt 10.0.1.11 | Un escaneo de los puertos que hemos encontrado abiertos en el cual nos ofrece mas información de la version d elos servicios  | Las versiones de los servicios  |  |
+| Comando | Qué esperamos | Qué ha salido (lo importante) |
+| --- | --- | --- |
+| `netdiscover` | El listado de los equipos que estan dentro de nuestra misma red | Los equipos conectos a la red que hemos echo el escaneo |
+| `sudo nmap -p- --open -sS --min-rate 5000 -n -Pn -oN puertos.txt 10.0.1.11` | El listado de los puertos y servicios abiertos | El listado de los puertos de la maquina selecionada |
+| `nmap -sC -sV -p22,80,111,36599 -oN puertos-exaustivo.txt 10.0.1.11` | Un escaneo de los puertos que hemos encontrado abiertos en el cual nos ofrece mas información de la version d elos servicios | Las versiones de los servicios | 
 
 
 **Servicios encontrados:** [puerto · servicio · versión]
